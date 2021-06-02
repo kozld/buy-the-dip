@@ -36,13 +36,14 @@ def is_sell_by_time(open_time, current_time):
 
 
 def buy_the_dip(msg):
-    global hodl_assets, price_data, prev_time, prev_rsi
+    global f, hodl_assets, price_data, prev_time, prev_rsi
     time, price = None, None
 
     if msg['e'] != 'error':
         time = datetime.datetime.fromtimestamp(int(msg['E']) / 1000.0)
         price = float(msg['k']['c'])
         print('%s - PRICE %f' % (time.strftime("%Y-%m-%d %H:%M"), price))
+        #f.write('%s - PRICE %f\n' % (time.strftime("%Y-%m-%d %H:%M"), price))
     else:
         print('ERROR %s' % msg['e'])
 
@@ -50,7 +51,7 @@ def buy_the_dip(msg):
         price_data = np.append(price_data, price)
         rsi = talib.RSI(price_data, timeperiod=RSI_PERIOD)
         print('RSI %s' % rsi[-1])
-        f.write('RSI %s' % rsi[-1])
+        #f.write('RSI %s\n' % rsi[-1])
 
         if len(price_data) > 3:
             price_data = price_data[-RSI_PERIOD:]
@@ -68,7 +69,7 @@ def buy_the_dip(msg):
                     f.write('BUY %f$ x %d\n' % (price, qty))
                     buy_order = client.create_test_order(symbol='BNBUSDT', side='BUY', type='MARKET', quantity=qty)
                     print('BUY ORDER %s' % buy_order)
-                    f.write('BUY ORDER %s' % buy_order)
+                    f.write('BUY ORDER %s\n' % buy_order)
                     hodl_assets.append(Asset(price, time, qty))
                 except Exception as e:
                     print(e)
@@ -84,7 +85,7 @@ def buy_the_dip(msg):
                 print('%s - SELL BY TIME %f$ x %d\n' % (time.strftime("%Y-%m-%d %H:%M"), price, asset.qty))
                 f.write('%s - SELL BY TIME %f$ x %d\n' % (time.strftime("%Y-%m-%d %H:%M"), price, asset.qty))
                 print('SELL ORDER %s' % sell_order)
-                f.write('SELL ORDER %s' % sell_order)
+                f.write('SELL ORDER %s\n' % sell_order)
             except Exception as e:
                 print(e)
         elif is_sell_by_takeprofit(asset.price, price):
@@ -93,12 +94,13 @@ def buy_the_dip(msg):
                 print('%s - SELL BY TAKE PROFIT %f$ x %d\n' % (time.strftime("%Y-%m-%d %H:%M"), price, asset.qty))
                 f.write('%s - SELL BY TAKE PROFIT %f$ x %d\n' % (time.strftime("%Y-%m-%d %H:%M"), price, asset.qty))
                 print('SELL ORDER %s' % sell_order)
-                f.write('SELL ORDER %s' % sell_order)
+                f.write('SELL ORDER %s\n' % sell_order)
             except Exception as e:
                 print(e)
         else:
             _hodl_assets.append(asset)
 
+    f.flush()
     hodl_assets = _hodl_assets
     print('HODL ASSETS: ', hodl_assets)
 
