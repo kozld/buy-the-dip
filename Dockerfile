@@ -1,7 +1,11 @@
-FROM otassel/python-talib:latest
+FROM otassel/python-talib:alpine
 
 ARG BINANCE_API
 ARG BINANCE_SECRET
+
+RUN apk update
+RUN apk add make automake gcc g++ subversion python3-dev
+RUN pip3 install --upgrade setuptools
 
 WORKDIR /app
 
