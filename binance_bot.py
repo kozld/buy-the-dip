@@ -66,8 +66,8 @@ def buy_the_dip(msg):
 
             if balance >= qty*price:
                 try:
-                    print('BUY %f$ x %d\n' % (price, qty))
-                    f.write('BUY %f$ x %d\n' % (price, qty))
+                    print('BUY %f$ x %f\n' % (price, qty))
+                    f.write('BUY %f$ x %f\n' % (price, qty))
                     buy_order = client.create_test_order(symbol='BNBUSDT', side='BUY', type='MARKET', quantity=qty)
                     print('BUY ORDER %s' % buy_order)
                     f.write('BUY ORDER %s\n' % buy_order)
@@ -83,8 +83,8 @@ def buy_the_dip(msg):
         if is_sell_by_time(asset.time, time):
             try:
                 sell_order = client.create_test_order(symbol='BNBUSDT', side='SELL', type='MARKET', quantity=asset.qty)
-                print('%s - SELL BY TIME %f$ x %d\n' % (time.strftime("%Y-%m-%d %H:%M"), price, asset.qty))
-                f.write('%s - SELL BY TIME %f$ x %d\n' % (time.strftime("%Y-%m-%d %H:%M"), price, asset.qty))
+                print('%s - SELL BY TIME %f$ x %f\n' % (time.strftime("%Y-%m-%d %H:%M"), price, asset.qty))
+                f.write('%s - SELL BY TIME %f$ x %f\n' % (time.strftime("%Y-%m-%d %H:%M"), price, asset.qty))
                 print('SELL ORDER %s' % sell_order)
                 f.write('SELL ORDER %s\n' % sell_order)
             except Exception as e:
@@ -92,8 +92,8 @@ def buy_the_dip(msg):
         elif is_sell_by_takeprofit(asset.price, price):
             try:
                 sell_order = client.create_test_order(symbol='BNBUSDT', side='SELL', type='MARKET', quantity=asset.qty)
-                print('%s - SELL BY TAKE PROFIT %f$ x %d\n' % (time.strftime("%Y-%m-%d %H:%M"), price, asset.qty))
-                f.write('%s - SELL BY TAKE PROFIT %f$ x %d\n' % (time.strftime("%Y-%m-%d %H:%M"), price, asset.qty))
+                print('%s - SELL BY TAKE PROFIT %f$ x %f\n' % (time.strftime("%Y-%m-%d %H:%M"), price, asset.qty))
+                f.write('%s - SELL BY TAKE PROFIT %f$ x %f\n' % (time.strftime("%Y-%m-%d %H:%M"), price, asset.qty))
                 print('SELL ORDER %s' % sell_order)
                 f.write('SELL ORDER %s\n' % sell_order)
             except Exception as e:
