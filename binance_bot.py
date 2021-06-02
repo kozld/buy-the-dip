@@ -68,7 +68,7 @@ def buy_the_dip(msg):
                 try:
                     print('BUY %f$ x %f\n' % (price, qty))
                     f.write('BUY %f$ x %f\n' % (price, qty))
-                    buy_order = client.create_test_order(symbol='BNBUSDT', side='BUY', type='MARKET', quantity=qty)
+                    buy_order = client.create_order(symbol='BNBUSDT', side='BUY', type='MARKET', quantity=qty)
                     print('BUY ORDER %s' % buy_order)
                     f.write('BUY ORDER %s\n' % buy_order)
                     hodl_assets.append(Asset(price, time, qty))
@@ -82,7 +82,7 @@ def buy_the_dip(msg):
     for (j, asset) in enumerate(hodl_assets):
         if is_sell_by_time(asset.time, time):
             try:
-                sell_order = client.create_test_order(symbol='BNBUSDT', side='SELL', type='MARKET', quantity=asset.qty)
+                sell_order = client.create_order(symbol='BNBUSDT', side='SELL', type='MARKET', quantity=asset.qty)
                 print('%s - SELL BY TIME %f$ x %f\n' % (time.strftime("%Y-%m-%d %H:%M"), price, asset.qty))
                 f.write('%s - SELL BY TIME %f$ x %f\n' % (time.strftime("%Y-%m-%d %H:%M"), price, asset.qty))
                 print('SELL ORDER %s' % sell_order)
@@ -91,7 +91,7 @@ def buy_the_dip(msg):
                 print(e)
         elif is_sell_by_takeprofit(asset.price, price):
             try:
-                sell_order = client.create_test_order(symbol='BNBUSDT', side='SELL', type='MARKET', quantity=asset.qty)
+                sell_order = client.create_order(symbol='BNBUSDT', side='SELL', type='MARKET', quantity=asset.qty)
                 print('%s - SELL BY TAKE PROFIT %f$ x %f\n' % (time.strftime("%Y-%m-%d %H:%M"), price, asset.qty))
                 f.write('%s - SELL BY TAKE PROFIT %f$ x %f\n' % (time.strftime("%Y-%m-%d %H:%M"), price, asset.qty))
                 print('SELL ORDER %s' % sell_order)
