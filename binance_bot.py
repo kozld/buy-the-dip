@@ -14,7 +14,7 @@ class Asset:
 
 
 # init
-DEPOSIT=1000
+DEPOSIT=10000
 RSI_PERIOD=3
 TAKE_PROFIT=2
 api_key = os.environ.get('binance_api')
@@ -60,7 +60,7 @@ def buy_the_dip(msg):
             print('%s - OVERSOLD! PRICE: %f$\n' % (time.strftime("%Y-%m-%d %H:%M"), price))
             f.write('%s - OVERSOLD! PRICE: %f$\n' % (time.strftime("%Y-%m-%d %H:%M"), price))
 
-            balance = float(client.get_asset_balance(asset='BNB')['free'])
+            balance = float(client.get_asset_balance(asset='USDT')['free'])
             #hodled_usd = reduce(lambda a, b: b.price * b.quantity, hodl_assets, 0)
             qty = round((DEPOSIT / price) / 4, 2)
 
