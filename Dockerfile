@@ -1,4 +1,4 @@
-FROM python:3.8-slim-buster
+FROM otassel/python-talib:latest
 
 ARG BINANCE_API
 ARG BINANCE_SECRET

@@ -50,6 +50,7 @@ def buy_the_dip(msg):
         price_data = np.append(price_data, price)
         rsi = talib.RSI(price_data, timeperiod=RSI_PERIOD)
         print('RSI %s' % rsi[-1])
+        f.write('RSI %s' % rsi[-1])
 
         if len(price_data) > 3:
             price_data = price_data[-RSI_PERIOD:]
