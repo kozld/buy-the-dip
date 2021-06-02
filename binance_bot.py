@@ -60,10 +60,11 @@ def buy_the_dip(msg):
             print('%s - OVERSOLD! PRICE: %f$\n' % (time.strftime("%Y-%m-%d %H:%M"), price))
             f.write('%s - OVERSOLD! PRICE: %f$\n' % (time.strftime("%Y-%m-%d %H:%M"), price))
 
-            balance = client.get_asset_balance(asset='BNB')
+            balance = float(client.get_asset_balance(asset='BNB')['free'])
+            #hodled_usd = reduce(lambda a, b: b.price * b.quantity, hodl_assets, 0)
             qty = round((DEPOSIT / price) / 4, 2)
 
-            if balance['free'] + qty*price <= DEPOSIT:
+            if balance >= qty*price:
                 try:
                     print('BUY %f$ x %d\n' % (price, qty))
                     f.write('BUY %f$ x %d\n' % (price, qty))
