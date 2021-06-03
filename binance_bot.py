@@ -12,7 +12,7 @@ api_key = os.environ.get('binance_api')
 api_secret = os.environ.get('binance_secret')
 deposit, token_a, token_b, token_pair, rsi_period, takeprofit = None, None, None, None, None, None
 
-client = Client(api_key=api_key, api_secret=api_secret, testnet=True)
+client = None
 f = open('trade-report.txt', 'w')
 price_data = np.array([], dtype=float)
 hodl_assets = []
@@ -116,6 +116,7 @@ if __name__ == "__main__":
     parser.add_argument('--tokenB', dest='token_b', default='USDT', help='the second token in a pair (default: USDT)')
     parser.add_argument('--period', dest='period', default=15, help='RSI period (default: 15)')
     parser.add_argument('--takeprofit', dest='takeprofit', default=2, help='takeprofit percentage (default: 2)')
+    parser.add_argument('--testnet', action='store_true')
 
     args = parser.parse_args()
 
@@ -134,6 +135,7 @@ if __name__ == "__main__":
     print('TAKE PROFIT: %f' % takeprofit)
     print('=============================')
 
+    client = Client(api_key=api_key, api_secret=api_secret, testnet=args.testnet)
     print(client.get_account())
 
     twm = ThreadedWebsocketManager()
