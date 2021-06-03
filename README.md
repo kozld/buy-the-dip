@@ -1,4 +1,4 @@
-# Python Binance Trading Bot
+# Binance Trading Bot
 
 This is a simple trading bot for the Binance exchange.
 
