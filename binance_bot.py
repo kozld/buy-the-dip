@@ -52,7 +52,7 @@ def buy_the_dip(msg):
         print('RSI %s' % rsi[-1])
         #f.write('RSI %s\n' % rsi[-1])
 
-        if len(price_data) > 3:
+        if len(price_data) > rsi_period:
             price_data = price_data[-rsi_period:]
 
         if prev_rsi >= 30 and rsi[-1] < 30:
