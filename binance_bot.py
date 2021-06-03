@@ -61,7 +61,7 @@ def buy_the_dip(msg):
 
             balance = float(client.get_asset_balance(asset=token_b)['free'])
             #hodled_usd = reduce(lambda a, b: b.price * b.quantity, hodl_assets, 0)
-            qty = round((deposit / price) / 4, 2)
+            qty = float("{:.2f}".format((deposit / price) / 4))
 
             if balance >= qty*price:
                 try:
