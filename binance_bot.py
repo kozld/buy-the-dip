@@ -19,23 +19,26 @@ def create_buy_order(price, qty):
 def create_sell_order(price, qty):
     return client.create_order(symbol=token_pair, side='SELL', type='MARKET', quantity=qty)
 
-def handle_socket_message(msg):
-    global prev_time
-    time, price = None, None
+def use_strategy(strategy):
+    def handle_socket_message(msg):
+        global prev_time
+        time, price = None, None
 
-    if msg['e'] != 'error':
-        time = datetime.datetime.fromtimestamp(int(msg['E']) / 1000.0)
-        price = float(msg['k']['c'])
-        print('%s - PRICE %f' % (time.strftime("%Y-%m-%d %H:%M"), price))
-    else:
-        print('ERROR %s' % msg['e'])
+        if msg['e'] != 'error':
+            time = datetime.datetime.fromtimestamp(int(msg['E']) / 1000.0)
+            price = float(msg['k']['c'])
+            print('%s - PRICE %f' % (time.strftime("%Y-%m-%d %H:%M"), price))
+        else:
+            print('ERROR %s' % msg['e'])
 
-    if (time - prev_time).total_seconds() // 60 >= 1:
-        balance = float(client.get_asset_balance(asset=token_b)['free'])
-        strategy.try_buy(balance, time, price, create_buy_order)
-    prev_time = time
+        if (time - prev_time).total_seconds() // 60 >= 1:
+            balance = float(client.get_asset_balance(asset=token_b)['free'])
+            strategy.try_buy(balance, time, price, create_buy_order)
+        prev_time = time
 
-    strategy.try_sell(time, price, create_sell_order)
+        strategy.try_sell(time, price, create_sell_order)
+
+    return handle_socket_message
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Simple Binance Trading Bot.')
@@ -72,4 +75,4 @@ if __name__ == "__main__":
 
     s = strategy.Strategy(deposit, rsi_period, take_profit)
 
-    twm.start_kline_socket(callback=handle_socket_message, symbol=token_pair)
+    twm.start_kline_socket(callback=use_strategy(s), symbol=token_pair)
