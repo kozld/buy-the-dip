@@ -45,6 +45,7 @@ class Strategy:
                     print('BUY %f$ x %s\n' % (price, qty))
                     f.write('BUY %f$ x %s\n' % (price, qty))
                     buy_order = create_buy_order(price, qty)
+                    print('BUY ORDER %s' % buy_order)
                     f.write('BUY ORDER %s\n' % buy_order)
                     hodl_assets.append(Asset(price, time, qty))
                 except Exception as e:
