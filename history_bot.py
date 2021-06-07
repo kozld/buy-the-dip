@@ -23,7 +23,7 @@ def use_strategy(strategy):
 
         nonlocal prev_time, balance
         if (time - prev_time).total_seconds() // 60 >= 1:
-            balance += strategy.try_buy(balance, time, price, create_buy_order)
+            balance -= strategy.try_buy(balance, time, price, create_buy_order)
             prev_time = time
 
         balance += strategy.try_sell(time, price, create_sell_order)
