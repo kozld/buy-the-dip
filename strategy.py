@@ -20,7 +20,7 @@ class Strategy:
         self.take_profit = take_profit
 
     def is_sell_by_takeprofit(self, buy_price, sell_price):
-        return (sell_price - buy_price) / buy_price * 100 >= self.takeprofit
+        return (sell_price - buy_price) / buy_price * 100 >= self.take_profit
 
     def is_sell_by_time(self, open_time, current_time):
         return (current_time - open_time).total_seconds() // 3600 >= 5
@@ -35,6 +35,7 @@ class Strategy:
         if len(price_data) > self.rsi_period:
             price_data = price_data[-self.rsi_period:]
 
+        total_price = 0
         if prev_rsi >= 30 and rsi[-1] < 30:
             print('%s - OVERSOLD! PRICE: %f$\n' % (time.strftime("%Y-%m-%d %H:%M"), price))
             f.write('%s - OVERSOLD! PRICE: %f$\n' % (time.strftime("%Y-%m-%d %H:%M"), price))
@@ -48,16 +49,23 @@ class Strategy:
                     print('BUY ORDER %s' % buy_order)
                     f.write('BUY ORDER %s\n' % buy_order)
                     hodl_assets.append(Asset(price, time, qty))
+                    total_price = float(qty)*price
                 except Exception as e:
                     print(e)
 
         prev_rsi = rsi[-1]
 
+        return total_price
+
     def try_sell(self, time, price, create_sell_order):
         global f, hodl_assets, profit
 
         _hodl_assets = []
+        total_price = 0
+
         for (j, asset) in enumerate(hodl_assets):
+            purchase_price = asset.price * float(asset.qty)
+            selling_price = price * float(asset.qty)
             if self.is_sell_by_time(asset.time, time):
                 try:
                     print('%s - SELL BY TIME %f$ x %s\n' % (time.strftime("%Y-%m-%d %H:%M"), price, asset.qty))
@@ -65,7 +73,8 @@ class Strategy:
                     sell_order = create_sell_order(price, asset.qty)
                     print('SELL ORDER %s' % sell_order)
                     f.write('SELL ORDER %s\n' % sell_order)
-                    profit += (price - asset.price) * float(asset.qty)
+                    profit += selling_price - purchase_price
+                    total_price += selling_price
                 except Exception as e:
                     print(e)
             elif self.is_sell_by_takeprofit(asset.price, price):
@@ -75,14 +84,18 @@ class Strategy:
                     sell_order = create_sell_order(price, asset.qty)
                     print('SELL ORDER %s' % sell_order)
                     f.write('SELL ORDER %s\n' % sell_order)
-                    profit += (price - asset.price) * float(asset.qty)
+                    profit += selling_price - purchase_price
+                    total_price += selling_price
                 except Exception as e:
                     print(e)
             else:
                 _hodl_assets.append(asset)
+
         hodl_assets = _hodl_assets
 
         print('HODL ASSETS: %s' % hodl_assets)
         print('PROFIT: %f' % profit)
 
         f.flush()
+
+        return total_price

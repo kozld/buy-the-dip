@@ -1,3 +1,5 @@
 .env
 .env.testnet
 trade-report.txt
+**/*.zip
+**/*.csv
