@@ -11,7 +11,6 @@ api_key = os.environ.get('binance_api')
 api_secret = os.environ.get('binance_secret')
 
 client, deposit, token_a, token_b, token_pair, rsi_period, take_profit = None, None, None, None, None, None, None
-prev_time = datetime.datetime.today()
 
 def create_buy_order(price, qty):
     return client.create_order(symbol=token_pair, side='BUY', type='MARKET', quantity=qty)
@@ -20,8 +19,12 @@ def create_sell_order(price, qty):
     return client.create_order(symbol=token_pair, side='SELL', type='MARKET', quantity=qty)
 
 def use_strategy(strategy):
+
+    prev_time = datetime.datetime.today()
+
     def handle_socket_message(msg):
-        global prev_time
+
+        nonlocal prev_time
         time, price = None, None
 
         if msg['e'] != 'error':
@@ -34,13 +37,14 @@ def use_strategy(strategy):
         if (time - prev_time).total_seconds() // 60 >= 1:
             balance = float(client.get_asset_balance(asset=token_b)['free'])
             strategy.try_buy(balance, time, price, create_buy_order)
-        prev_time = time
+            prev_time = time
 
         strategy.try_sell(time, price, create_sell_order)
 
     return handle_socket_message
 
 if __name__ == "__main__":
+
     parser = argparse.ArgumentParser(description='Simple Binance Trading Bot.')
 
     parser.add_argument('--deposit', dest='deposit', required=True, help='deposit amount (required)')
@@ -74,5 +78,4 @@ if __name__ == "__main__":
     twm.start()
 
     s = strategy.Strategy(deposit, rsi_period, take_profit)
-
     twm.start_kline_socket(callback=use_strategy(s), symbol=token_pair)
