@@ -22,7 +22,7 @@ def use_strategy(strategy):
     def handle_message(time, price):
 
         nonlocal prev_time, balance
-        if (time - prev_time).total_seconds() // 60 >= 1:
+        if (time - prev_time).total_seconds() // 60 >= 5:
             balance -= strategy.try_buy(balance, time, price, create_buy_order)
             prev_time = time
 

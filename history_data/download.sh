@@ -1,7 +1,7 @@
 #!/bin/bash
 
 symbols=("DOGEUSDT")
-intervals=("1m")
+intervals=("5m")
 years=("2021")
 months=(01 02 03 04 05)
 
