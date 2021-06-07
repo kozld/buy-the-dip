@@ -32,7 +32,7 @@ def use_strategy(strategy):
 
 if __name__ == "__main__":
 
-    data_dir = 'history-data'
+    data_dir = 'history_data'
 
     parser = ArgumentParser()
     parser.add_argument('-f', '--file', dest='filename', required=True, help='CSV file with historical data (required)')

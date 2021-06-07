@@ -2,7 +2,7 @@ import talib
 import numpy as np
 
 
-f = open('trade-report.txt', 'w')
+f = open('trade_report.txt', 'w')
 price_data = np.array([], dtype=float)
 hodl_assets = []
 prev_rsi, profit = 0, 0
@@ -95,6 +95,7 @@ class Strategy:
 
         print('HODL ASSETS: %s' % hodl_assets)
         print('PROFIT: %f' % profit)
+        f.write('PROFIT: %f\n' % profit)
 
         f.flush()
 

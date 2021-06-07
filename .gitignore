@@ -1,5 +1,5 @@
 .env
 .env.testnet
-trade-report.txt
+trade_report.txt
 **/*.zip
 **/*.csv
