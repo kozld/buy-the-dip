@@ -5,21 +5,25 @@ import strategy
 
 from binance import Client, ThreadedWebsocketManager
 
-
 # init
+client, deposit, token_a, token_b, token_pair, rsi_period, take_profit, testnet = \
+    None, None, None, None, None, None, None, None
+
+# time frame in minutes
+time_frame = 5
 api_key = os.environ.get('binance_api')
 api_secret = os.environ.get('binance_secret')
-testnet = False
 
-client, deposit, token_a, token_b, token_pair, rsi_period, take_profit = None, None, None, None, None, None, None
 
 def create_buy_order(price, qty):
     return client.create_order(symbol=token_pair, side='BUY', type='MARKET', quantity=qty)
 
+
 def create_sell_order(price, qty):
     return client.create_order(symbol=token_pair, side='SELL', type='MARKET', quantity=qty)
 
-def use_strategy(strategy):
+
+def use_strategy(s):
 
     prev_time = datetime.datetime.today()
 
@@ -28,6 +32,7 @@ def use_strategy(strategy):
         global client
         nonlocal prev_time
 
+        # parse message
         if msg['e'] == 'error':
             print('ERROR %s' % msg['e'])
             print('RECONNECT...')
@@ -38,15 +43,17 @@ def use_strategy(strategy):
             price = float(msg['k']['c'])
             print('%s PRICE %f' % (time.strftime("%Y-%m-%d %H:%M"), price))
 
-        # check possible to buy every 5 min
-        if (time - prev_time).total_seconds() // 60 >= 5:
+        # check possible to buy every <time_frame> min
+        if (time - prev_time).total_seconds() // 60 >= time_frame:
             balance = float(client.get_asset_balance(asset=token_b)['free'])
-            strategy.try_buy(balance, time, price, create_buy_order)
+            s.try_buy(balance, time, price, create_buy_order)
             prev_time = time
 
-        strategy.try_sell(time, price, create_sell_order)
+        # check possible to sell anywhere
+        s.try_sell(time, price, create_sell_order)
 
     return handle_socket_message
+
 
 if __name__ == "__main__":
 

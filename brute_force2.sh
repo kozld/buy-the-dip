@@ -4,7 +4,7 @@
 # This utility is under construction
 # ==================================
 
-FILENAMES=("DOGEUSDT-5m-2021-01.csv" "DOGEUSDT-5m-2021-02.csv" "DOGEUSDT-5m-2021-03.csv" "DOGEUSDT-5m-2021-04.csv" "DOGEUSDT-5m-2021-05.csv")
+FILENAMES=("DOGEUSDT-1m-2021-01.csv" "DOGEUSDT-1m-2021-02.csv" "DOGEUSDT-1m-2021-03.csv" "DOGEUSDT-1m-2021-04.csv" "DOGEUSDT-1m-2021-05.csv")
 START=10
 END=10
 

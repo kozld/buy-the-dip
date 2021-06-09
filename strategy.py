@@ -7,11 +7,13 @@ price_data = np.array([], dtype=float)
 hodl_assets = []
 prev_rsi, profit = 0, 0
 
+
 class Asset:
     def __init__(self, price, time, qty):
         self.price = price
         self.time = time
         self.qty = qty
+
 
 class Strategy:
     def __init__(self, deposit, rsi_period, take_profit):

@@ -1,34 +1,46 @@
 import csv
+import time
 import datetime
 import strategy
 
 from argparse import ArgumentParser
 
 
+# time frame in minutes
+time_frame = 5
+
+
 def csv_reader(file_obj):
     return csv.reader(file_obj)
+
 
 def create_buy_order(price, qty):
     pass
 
+
 def create_sell_order(price, qty):
     pass
 
-def use_strategy(strategy):
+
+def use_strategy(s):
 
     prev_time = datetime.datetime.fromtimestamp(0)
-    balance = strategy.deposit
+    balance = s.deposit
 
     def handle_message(time, price):
 
         nonlocal prev_time, balance
-        #if (time - prev_time).total_seconds() // 3600 >= 24:
-        balance -= strategy.try_buy(balance, time, price, create_buy_order)
-        #    prev_time = time
 
-        balance += strategy.try_sell(time, price, create_sell_order)
+        # check possible to buy every <time_frame> min
+        if (time - prev_time).total_seconds() // 60 >= time_frame:
+            balance -= s.try_buy(balance, time, price, create_buy_order)
+            prev_time = time
+
+        # check possible to sell anywhere
+        balance += s.try_sell(time, price, create_sell_order)
 
     return handle_message
+
 
 if __name__ == "__main__":
 
@@ -52,6 +64,7 @@ if __name__ == "__main__":
         reader = csv_reader(f_obj)
 
         for row in reader:
-            time = datetime.datetime.fromtimestamp(int(row[0]) / 1000.0)
-            price = float(row[4])
-            history_bot(time, price)
+            t = datetime.datetime.fromtimestamp(int(row[0]) / 1000.0)
+            p = float(row[4])
+            history_bot(t, p)
+            # time.sleep(1)
