@@ -9,6 +9,7 @@ from binance import Client, ThreadedWebsocketManager
 # init
 api_key = os.environ.get('binance_api')
 api_secret = os.environ.get('binance_secret')
+testnet = False
 
 client, deposit, token_a, token_b, token_pair, rsi_period, take_profit = None, None, None, None, None, None, None
 
@@ -24,17 +25,21 @@ def use_strategy(strategy):
 
     def handle_socket_message(msg):
 
+        global client
         nonlocal prev_time
-        time, price = None, None
 
-        if msg['e'] != 'error':
+        if msg['e'] == 'error':
+            print('ERROR %s' % msg['e'])
+            print('RECONNECT...')
+            client = Client(api_key=api_key, api_secret=api_secret, testnet=testnet)
+            return
+        else:
             time = datetime.datetime.fromtimestamp(int(msg['E']) / 1000.0)
             price = float(msg['k']['c'])
-            print('%s - PRICE %f' % (time.strftime("%Y-%m-%d %H:%M"), price))
-        else:
-            print('ERROR %s' % msg['e'])
+            print('%s PRICE %f' % (time.strftime("%Y-%m-%d %H:%M"), price))
 
-        if (time - prev_time).total_seconds() // 60 >= 1:
+        # check possible to buy every 5 min
+        if (time - prev_time).total_seconds() // 60 >= 5:
             balance = float(client.get_asset_balance(asset=token_b)['free'])
             strategy.try_buy(balance, time, price, create_buy_order)
             prev_time = time
@@ -62,6 +67,7 @@ if __name__ == "__main__":
     rsi_period = int(args.period)
     take_profit = float(args.take_profit)
     token_pair = '%s%s' % (token_a, token_b)
+    testnet = args.testnet
 
     print('=============================')
     print('DEPOSIT: %f' % deposit)
@@ -71,7 +77,7 @@ if __name__ == "__main__":
     print('TAKE PROFIT: %f' % take_profit)
     print('=============================')
 
-    client = Client(api_key=api_key, api_secret=api_secret, testnet=args.testnet)
+    client = Client(api_key=api_key, api_secret=api_secret, testnet=testnet)
     print(client.get_account())
 
     twm = ThreadedWebsocketManager()

@@ -4,7 +4,7 @@
 # This utility is under construction
 # ==================================
 
-FILENAMES=("DOGEUSDT-5m-2021-01.csv" "DOGEUSDT-5m-2021-02.csv" "DOGEUSDT-5m-2021-03.csv" "DOGEUSDT-5m-2021-04.csv" "DOGEUSDT-5m-2021-05.csv")
+FILENAMES=("DOGEUSDT-5m-2021-01.csv")
 START=2
 END=30
 
@@ -16,7 +16,7 @@ for i in $(seq $START $END); do
   profit=0
   for FILENAME in ${FILENAMES[@]}; do
 
-    python history_bot.py -f ${FILENAME} --deposit 1000 --period $i > /dev/null
+    python history_bot.py -f ${FILENAME} --deposit 1000 --period $i --takeProfit 2 > /dev/null
     tmp=$( tail -n 1 trade_report.txt | awk '{print $2}' )
     profit=$(echo "$profit + $tmp" |bc -l)
   done
