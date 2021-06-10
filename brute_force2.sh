@@ -1,34 +1,38 @@
 #!/bin/bash
 
-# ==================================
-# This utility is under construction
-# ==================================
+RSI_START=2
+RSI_END=20
+FRAME_START=1
+FRAME_END=5
 
-FILENAMES=("DOGEUSDT-1m-2021-01.csv" "DOGEUSDT-1m-2021-02.csv" "DOGEUSDT-1m-2021-03.csv" "DOGEUSDT-1m-2021-04.csv" "DOGEUSDT-1m-2021-05.csv")
-START=10
-END=10
+best_profit=-9999
+best_rsi=$RSI_START
+best_frame=$FRAME_START
 
-for FILENAME in ${FILENAMES[@]}; do
+for rsi in $(seq $RSI_START $RSI_END); do
 
-  best_rsi=$START
-  best_profit=0
+  for frame in $(seq $FRAME_START $FRAME_END); do
 
-  for i in $(seq $START $END); do
+    profit=0
 
-    python history_bot.py -f ${FILENAME} --deposit 1000 --period $i --takeProfit 2 > /dev/null
-    profit=$( tail -n 1 trade_report.txt | awk '{print $2}' )
+    for day in $(seq 1 30); do
+      python history_bot.py -f "day_${day}.csv" --deposit 1000 --period $rsi --takeProfit 0.3 --timeFrame $frame > /dev/null
+      tmp=$( tail -n 1 trade_report.txt | awk '{print $2}' )
+      profit=$(echo "$profit + $tmp" |bc -l)
+    done
 
     if [ $(echo "$profit > $best_profit" |bc -l) -eq 1 ]; then
       best_profit=$profit
-      best_rsi=$i
+      best_rsi=$rsi
+      best_frame=$frame
     fi
 
   done
 
-  echo "===================================="
-  echo "[FILENAME]" $FILENAME
-  echo "[BEST RSI]" $best_rsi
-  echo "[BEST PROFIT]" $best_profit
-  echo "===================================="
-
 done
+
+echo "===================================="
+echo "[BEST PROFIT]" $best_profit
+echo "[BEST RSI]" $best_rsi
+echo "[BEST FRAME]" $best_frame
+echo "===================================="

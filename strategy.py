@@ -25,7 +25,7 @@ class Strategy:
         return (sell_price - buy_price) / buy_price * 100 >= self.take_profit
 
     def is_sell_by_time(self, open_time, current_time):
-        return (current_time - open_time).total_seconds() // 3600 >= 5
+        return (current_time - open_time).total_seconds() // 3600 >= 24
 
     def try_buy(self, balance, time, price, create_buy_order):
         global f, hodl_assets, price_data, prev_rsi

@@ -6,8 +6,7 @@ import strategy
 from argparse import ArgumentParser
 
 
-# time frame in minutes
-time_frame = 5
+time_frame = None
 
 
 def csv_reader(file_obj):
@@ -36,7 +35,7 @@ def use_strategy(s):
             balance -= s.try_buy(balance, time, price, create_buy_order)
             prev_time = time
 
-        # check possible to sell anywhere
+        # check possible to sell every times
         balance += s.try_sell(time, price, create_sell_order)
 
     return handle_message
@@ -51,11 +50,13 @@ if __name__ == "__main__":
     parser.add_argument('-d', '--deposit', dest='deposit', required=True, help='deposit amount (required)')
     parser.add_argument('-p', '--period', dest='period', default=15, help='RSI period (default: 15)')
     parser.add_argument('-t', '--takeProfit', dest='take_profit', default=2, help='takeprofit percentage (default: 2)')
+    parser.add_argument('-m', '--timeFrame', dest='time_frame', default=1, help='time frame in minutes (default: 1)')
     args = parser.parse_args()
 
     deposit = float(args.deposit)
     rsi_period = int(args.period)
     take_profit = float(args.take_profit)
+    time_frame = int(args.time_frame)
 
     s = strategy.Strategy(deposit, rsi_period, take_profit)
     history_bot = use_strategy(s)
