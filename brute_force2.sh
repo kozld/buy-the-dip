@@ -1,9 +1,9 @@
 #!/bin/bash
 
-RSI_START=2
-RSI_END=20
+RSI_START=5
+RSI_END=5
 FRAME_START=1
-FRAME_END=5
+FRAME_END=1
 
 best_profit=-9999
 best_rsi=$RSI_START
