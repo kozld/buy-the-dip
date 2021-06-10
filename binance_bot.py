@@ -6,11 +6,9 @@ import strategy
 from binance import Client, ThreadedWebsocketManager
 
 # init
-client, deposit, token_a, token_b, token_pair, rsi_period, take_profit, testnet = \
-    None, None, None, None, None, None, None, None
+client, deposit, token_a, token_b, token_pair, rsi_period, take_profit, time_frame, testnet = \
+    None, None, None, None, None, None, None, None, None
 
-# time frame in minutes
-time_frame = 5
 api_key = os.environ.get('binance_api')
 api_secret = os.environ.get('binance_secret')
 
@@ -49,7 +47,7 @@ def use_strategy(s):
             s.try_buy(balance, time, price, create_buy_order)
             prev_time = time
 
-        # check possible to sell anywhere
+        # check possible to sell every times
         s.try_sell(time, price, create_sell_order)
 
     return handle_socket_message
@@ -64,6 +62,7 @@ if __name__ == "__main__":
     parser.add_argument('--tokenB', dest='token_b', default='USDT', help='the second token in a pair (default: USDT)')
     parser.add_argument('--period', dest='period', default=15, help='RSI period (default: 15)')
     parser.add_argument('--takeProfit', dest='take_profit', default=2, help='takeprofit percentage (default: 2)')
+    parser.add_argument('-m', '--timeFrame', dest='time_frame', default=1, help='time frame in minutes (default: 1)')
     parser.add_argument('--testnet', action='store_true')
 
     args = parser.parse_args()
@@ -74,6 +73,7 @@ if __name__ == "__main__":
     rsi_period = int(args.period)
     take_profit = float(args.take_profit)
     token_pair = '%s%s' % (token_a, token_b)
+    time_frame = int(args.time_frame)
     testnet = args.testnet
 
     print('=============================')
@@ -82,6 +82,7 @@ if __name__ == "__main__":
     print('TOKEN B: %s' % token_b)
     print('RSI PERIOD: %d' % rsi_period)
     print('TAKE PROFIT: %f' % take_profit)
+    print('TIME FRAME: %f' % time_frame)
     print('=============================')
 
     client = Client(api_key=api_key, api_secret=api_secret, testnet=testnet)
