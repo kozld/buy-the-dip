@@ -1,6 +1,7 @@
 import talib
 import numpy as np
 
+
 price_data = np.array([], dtype=float)
 prev_rsi = 0
 
