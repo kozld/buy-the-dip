@@ -1,3 +1,4 @@
 numpy==1.20.2
 python-binance==1.0.11
 TA-Lib==0.4.20
+redis~=3.5.3
